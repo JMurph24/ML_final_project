@@ -1,9 +1,12 @@
 '''
 Names (Please write names in <Last Name, First Name> format):
-1. Doe, John
-2. Doe, Jane
+1. kanagaraj, kanimozhi
+2. Patel, Jaimin
+3. Murphy, Jamison
 
 TODO: Project type
+Image Segmentation
+dataset : VOCSegmentation-2012
 
 TODO: Report what each member did in this project
 
