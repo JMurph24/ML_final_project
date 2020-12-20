@@ -483,7 +483,7 @@ if __name__ == '__main__':
         'train',
         'tvmonitor']
     #Deining the input features
-    input_features = 3 * 224 * 224
+    input_features = 3 * 32 * 32
     
     #VOC has 21 classes
     n_class = 21
