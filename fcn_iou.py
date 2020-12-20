@@ -461,7 +461,6 @@ if __name__ == '__main__':
     
     #Defining the classes
     classes = [
-        'background',
         'aeroplane',
         'bicycle',
         'bird',
@@ -481,12 +480,13 @@ if __name__ == '__main__':
         'sheep',
         'sofa',
         'train',
-        'tvmonitor']
+        'tvmonitor'
+    ]
     #Deining the input features
     input_features = 3 * 32 * 32
     
-    #VOC has 21 classes
-    n_class = 21
+    #VOC has 20 classes
+    n_class = 20
 
     # TODO: Define network
     net = FullyConvolutionalNetwork(
