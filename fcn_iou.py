@@ -7,6 +7,7 @@ TODO: Project type
 
 TODO: Report what each member did in this project
 
+#python fcn_iou.py --train_network --batch_size 10 --n_epoch 5 --learning_rate 1e-3 --lambda_weight_decay 0.01 --learning_rate_decay 0.80 --learning_rate_decay_period 2
 '''
 import argparse
 import torch, torchvision
@@ -218,7 +219,7 @@ def train(net,
             
             # TODO: Clear gradients so we don't accumlate them from previous batches
             optimizer.zero_grad()
-            labels = torch.squeeze(labels)
+            labels = torch.squeeze(labels, dim=1)
             labels = labels.long()
             
             # TODO: Compute loss function
@@ -258,44 +259,47 @@ def evaluate(net, dataloader):
 
         for (images, labels) in dataloader:
             
-            
             shape = images.shape
-           
-            
+      
             # TODO: Forward through the network
             outputs = net(images)
-            outputs = torch.squeeze(outputs, dim=1)
-            outputs = outputs.long()
+            
             
             # TODO: Compute evaluation metric(s) for each sample
+            #Take the argmax over the outputs
             _, predictions = torch.max(outputs, dim=1)
+            
+            target = torch.squeeze(labels)
+            target = target.long()
+            
+            #print('Predictions shape', predictions.shape)
+            #print('Target shape', target.shape)
+            
+            # Accumulate number of samples
             n_sample = n_sample + labels.shape[0]
+            #print("predictions shape:", predictions.shape)
+            #print("labels shape:", labels.shape)
             
-            
-            
-
     # TODO: Compute mean evaluation metric(s)
-    
-    Intersetion_union = intersection_over_union(predictions, images)
+    IOU = intersection_over_union(predictions, target)
     
     # TODO: Print scores
-    print('Jaccard over {} images{:.2f}%:'.format(n_sample, (Intersetion_union * 100.0)))
-
+    print('Jaccard over {} images{:.2f}%:'.format(n_sample, (IOU * 100.0)))
+    
     # TODO: Convert the last batch of images back to original shape
     images = images.view(shape[0], shape[1], shape[2], shape[3])
     images = images.cpu().numpy()
     images = np.transpose(images, (0, 2, 3, 1))
-
+    
     # TODO: Convert the last batch of predictions to the original image shape
     '''predictions = predictions.view(shape[0], shape[1], shape[2], shape[3])
     predictions = predictions.cpu().numpy()
     predictions = np.transpose(predictions, (0, 2, 3, 1))'''
     
     # TODO: Plot images
+
   
-
-    plt.show()
-
+    
 def intersection_over_union(prediction, ground_truth):
     '''
     Computes the intersection over union (IOU) between prediction and ground truth
@@ -313,7 +317,6 @@ def intersection_over_union(prediction, ground_truth):
     # TODO: Computes intersection over union score
     # Implement ONLY if you are working on semantic segmentation
     # J(A, B) = |A over B| / |A cup B| = |A over B| / |A| + |B| - |A over B|
-    #prediction = prediction.squeeze(1)  # BATCH x 1 x H x W => BATCH x H x W
     iou = 0.0
     for target in ground_truth:
         intersection = torch.sum((prediction==ground_truth) * (ground_truth==target))
@@ -322,12 +325,15 @@ def intersection_over_union(prediction, ground_truth):
 
         inter_union = (intersection / union)
         iou = iou + inter_union
-        print(target)
+        
 
     avg_iou = float(iou / len(ground_truth))
 
-    print('IOU: ', avg_iou)
-    return avg_iou
+    
+    return avg_iou  
+
+    
+   
 
 
 def plot_images(X, Y, n_row, n_col, fig_title, subplot_titles):
@@ -353,22 +359,7 @@ def plot_images(X, Y, n_row, n_col, fig_title, subplot_titles):
     fig.suptitle(fig_title)
 
     # TODO: Visualize your input images and predictions
-    for i in range(1, n_row * n_col + 1):
-
-        ax = fig.add_subplot(n_row, n_col, i)
-
-        index = i - 1
-        x_i = X[index, ...]
-        subplot_title_i = subplot_titles[index]
-
-        if len(x_i.shape) == 1:
-            x_i = np.expand_dims(x_i, axis=0)
-
-        ax.set_title(subplot_title_i)
-        ax.imshow(x_i)
-
-        plt.box(False)
-        plt.axis('off')
+    
 
 if __name__ == '__main__':
 
@@ -477,5 +468,5 @@ if __name__ == '__main__':
 
     # TODO: Evaluate network on testing set
     evaluate(
-        net=net,
-        dataloader=dataloader_test)
+       net=net,
+       dataloader=dataloader_test)
