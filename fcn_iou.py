@@ -124,20 +124,20 @@ class FullyConvolutionalNetwork(torch.nn.Module):
 
     def forward(self, x):
         f = x
-        f = self.relu1_1(self.conv1_1(f))
+        f = self.relu1(self.conv1_1(f))
         f = self.relu1_2(self.conv1_2(f))
         f = self.pool1(f)
 
-        f = self.relu2_1(self.conv2_1(f))
+        f = self.relu2(self.conv2_1(f))
         f = self.relu2_2(self.conv2_2(f))
         f = self.pool2(f)
 
-        f = self.relu3_1(self.conv3_1(f))
+        f = self.relu3(self.conv3_1(f))
         f = self.relu3_2(self.conv3_2(f))
         f = self.pool3(f)
       
 
-        f = self.relu4_1(self.conv4_1(f))
+        f = self.relu4(self.conv4_1(f))
         f = self.relu4_2(self.conv4_2(f))
         f = self.pool4(f)
   
@@ -145,19 +145,19 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         #Deconvolution/upsampling
         #fully connected Layer 1
         f = self.fc1(f)
-        f = self.relu5_1(self.conv5_1(f))
+        f = self.relu5(self.conv5_1(f))
         f = self.relu5_2(self.conv5_2(f))
         #fully connected Layer 2
         f = self.fc2(f)
-        f = self.relu6_1(self.conv6_1(f))
+        f = self.relu6(self.conv6_1(f))
         f = self.relu6_2(self.conv6_2(f))
         #fully connected Layer 3
         f = self.fc3(f)
-        f = self.relu7_1(self.conv7_1(f))
+        f = self.relu7(self.conv7_1(f))
         f = self.relu7_2(self.conv7_2(f))
         #fully connected Layer 4
         f = self.fc4(f)
-        f = self.relu8_1(self.conv8_1(f))
+        f = self.relu8(self.conv8_1(f))
         f = self.relu8_2(self.conv8_2(f))
         
         return f
