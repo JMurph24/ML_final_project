@@ -1,8 +1,7 @@
 '''
 Names (Please write names in <Last Name, First Name> format):
-1. kanagaraj, kanimozhi
-2.Patel, jaimin
-3.Murphy, Jamison
+1. Doe, John
+2. Doe, Jane
 
 TODO: Project type
 
@@ -81,14 +80,14 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         self.relu3 = torch.nn.ReLU(inplace=True)
         self.conv3_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu3_2 = torch.nn.ReLU(inplace=True)
-        self.pool3 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool3 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
         
         #Layer 4 + Relu activation function + maxpooling
         self.conv4 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu4 = torch.nn.ReLU(inplace=True)
         self.conv4_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu4_2 = torch.nn.ReLU(inplace=True)
-        self.pool4 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool4 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
         
         #Tranposing Convolutional layer
         #Fully connected layer 1
@@ -252,7 +251,6 @@ def evaluate(net, dataloader):
 
         Please add any necessary arguments
     '''
-    n_correct = 0
     n_sample = 0
     
     # Make sure we do not backpropagate
@@ -262,45 +260,39 @@ def evaluate(net, dataloader):
             
             
             shape = images.shape
-            n_dim = np.prod(shape[1:])
-            images = images.view(-1, n_dim)
+           
             
             # TODO: Forward through the network
             outputs = net(images)
-            labels = torch.squeeze(labels)
-            labels = labels.long()
+            outputs = torch.squeeze(outputs, dim=1)
+            outputs = outputs.long()
             
             # TODO: Compute evaluation metric(s) for each sample
             _, predictions = torch.max(outputs, dim=1)
             n_sample = n_sample + labels.shape[0]
-            n_correct = n_correct + torch.sum(predictions == labels).item()
+            
             
             
 
     # TODO: Compute mean evaluation metric(s)
-    mean_accuracy = 100.0 * n_correct / n_sample
+    
     Intersetion_union = intersection_over_union(predictions, images)
     
     # TODO: Print scores
-    print('Jaccard Index of  %d images: %d %% ' % (n_sample, Intersetion_union))
-    print('Mean accuracy over %d images: %d %%' % (n_sample, mean_accuracy))
-    
+    print('Jaccard over {} images{:.2f}%:'.format(n_sample, (Intersetion_union * 100.0)))
+
     # TODO: Convert the last batch of images back to original shape
     images = images.view(shape[0], shape[1], shape[2], shape[3])
     images = images.cpu().numpy()
     images = np.transpose(images, (0, 2, 3, 1))
 
     # TODO: Convert the last batch of predictions to the original image shape
-    predictions = predictions.view(shape[0], shape[1], shape[2], shape[3])
+    '''predictions = predictions.view(shape[0], shape[1], shape[2], shape[3])
     predictions = predictions.cpu().numpy()
-    predictions = np.transpose(predictions, (0, 2, 3, 1))
+    predictions = np.transpose(predictions, (0, 2, 3, 1))'''
     
     # TODO: Plot images
-    plot_images(
-        X=images, 
-        n_row=2, 
-        n_col=2, 
-        fig_title='Image Segmentation of fully convolutional neural networks uf VOC-2012 dataset')
+  
 
     plt.show()
 
@@ -321,11 +313,21 @@ def intersection_over_union(prediction, ground_truth):
     # TODO: Computes intersection over union score
     # Implement ONLY if you are working on semantic segmentation
     # J(A, B) = |A over B| / |A cup B| = |A over B| / |A| + |B| - |A over B|
-    intersection = np.logical_and(ground_truth, prediction)
-    union = np.logical_or(ground_truth, prediction)
-    score_IOU = np.sum(intersection) / np.sum(union)
-    
-    return score_IOU
+    #prediction = prediction.squeeze(1)  # BATCH x 1 x H x W => BATCH x H x W
+    iou = 0.0
+    for target in ground_truth:
+        intersection = torch.sum((prediction==ground_truth) * (ground_truth==target))
+       
+        union = torch.sum((prediction==target)+(ground_truth==target))
+
+        inter_union = (intersection / union)
+        iou = iou + inter_union
+        print(target)
+
+    avg_iou = float(iou / len(ground_truth))
+
+    print('IOU: ', avg_iou)
+    return avg_iou
 
 
 def plot_images(X, Y, n_row, n_col, fig_title, subplot_titles):
