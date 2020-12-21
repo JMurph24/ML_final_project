@@ -1,19 +1,15 @@
 '''
 Names (Please write names in <Last Name, First Name> format):
-1. kanagaraj, kanimozhi
-2. Patel, Jaimin
-3. Murphy, Jamison
+1. Doe, John
+2. Doe, Jane
 
 TODO: Project type
-Image Segmentation
-dataset : VOCSegmentation-2012
 
 TODO: Report what each member did in this project
 
 '''
 import argparse
-import torch
-import torchvision
+import torch, torchvision
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -52,7 +48,7 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         Please add any necessary arguments
     '''
 
-    def __init__(self,input_features, n_class, pool='max'):
+    def __init__(self,input_features, n_class):
         super(FullyConvolutionalNetwork, self).__init__()
 
         # TODO: Design your neural network using
@@ -65,155 +61,107 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         # (4) transposed convolutional layers
         # https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html
         
-        # convolution layers (5)
-        #Layer 1
-        self.conv1 = torch.nn.Conv2d(input_features, 64, kernel_size=(3, 3), stride=2, padding=1)
+        #Layer 1 + Relu activation function + maxpooling
+        self.conv1 = torch.nn.Conv2d(in_channels=input_features, out_channels=64, kernel_size=3, padding=1)
         self.relu1 = torch.nn.ReLU(inplace=True)
-        self.conv1_2 = torch.nn.Conv2d(64, 64, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv1_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu1_2 = torch.nn.ReLU(inplace=True)
-        self.pool1 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.pool1 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
-        #Layer 2
-        self.conv2 = torch.nn.Conv2d(64, 128, kernel_size=(3, 3), stride=2, padding=1)
+        #Layer 2 + Relu activation function + maxpooling
+        self.conv2 = torch.nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
         self.relu2 = torch.nn.ReLU(inplace=True)
-        self.conv2_2 = torch.nn.Conv2d(128, 128, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv2_2 = torch.nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1)
         self.relu2_2 = torch.nn.ReLU(inplace=True)
-        self.pool2 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.pool2 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
-        #Layer 3
-        self.conv3 = torch.nn.Conv2d(128, 256, kernel_size=(3, 3), stride=2, padding=1)
+        #Layer 3 + Relu activation function + maxpooling
+        self.conv3 = torch.nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, padding=1)
         self.relu3 = torch.nn.ReLU(inplace=True)
-        self.conv3_2 = torch.nn.Conv2d(256, 256, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv3_2 = torch.nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1)
         self.relu3_2 = torch.nn.ReLU(inplace=True)
-        self.pool3 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.pool3 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
-        #Layer 4
-        self.conv4 = torch.nn.Conv2d(256, 512, kernel_size=(3, 3), stride=2, padding=1)
+        #Layer 4 + Relu activation function + maxpooling
+        self.conv4 = torch.nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, padding=1)
         self.relu4 = torch.nn.ReLU(inplace=True)
-        self.conv4_2 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv4_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu4_2 = torch.nn.ReLU(inplace=True)
-        self.pool4 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.pool4 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
-        #Layer 5
-        self.conv5 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        #Tranposing Convolutional layer
+        #Fully connected layer 1
+        self.fc1 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv5 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu5 = torch.nn.ReLU(inplace=True)
-        self.conv5_2 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv5_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu5_2 = torch.nn.ReLU(inplace=True)
-        self.pool5 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
         
-        #Layer 6
-        self.conv6 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        #fully connected Layer 2
+        self.fc2 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv6 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu6 = torch.nn.ReLU(inplace=True)
-        self.conv6_2 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv6_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu6_2 = torch.nn.ReLU(inplace=True)
-        self.pool6 = torch.nn.AvgPool2d(kernel_size=3, stride=2)
         
-        #Layer 7
-        self.conv7 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        
+         #fully connected Layer 3
+        self.fc3 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv7 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu7 = torch.nn.ReLU(inplace=True)
-        self.conv7_2 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv7_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu7_2 = torch.nn.ReLU(inplace=True)
-        self.pool7 = torch.nn.AvgPool2d(kernel_size=3, stride=2)
         
-        #Layer 8
-        self.conv8 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+         #fully connected Layer 4
+        self.fc4 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv8 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
         self.relu8 = torch.nn.ReLU(inplace=True)
-        self.conv8_2 = torch.nn.Conv2d(512, 512, kernel_size=(3, 3), stride=2, padding=1)
+        self.conv8_2 = torch.nn.Conv2d(in_channels=256, out_channels=n_class, kernel_size=3, padding=1)
         self.relu8_2 = torch.nn.ReLU(inplace=True)
-        self.pool8 = torch.nn.AvgPool2d(kernel_size=3, stride=2)
         
-    
-        #Fully convolution layers
-        #fc 1
-        self.fcn_1 = torch.nn.Conv2d(512, 4096, kernel_size=7)
-        self.relu_fc_1 = torch.nn.ReLU(inplace=True)
-        self.drop1 = torch.nn.Dropout2d()
         
-        #fc 2
-        self.fcn_2 = torch.nn.Conv2d(4096, 1, kernel_size=1)
-        self.relu_fc_2 = torch.nn.ReLU(inplace=True)
-        self.drop2 = torch.nn.Dropout2d()
-        
-        self.score  = torch.nn.Conv2d(4096, n_class, 1)
-        self.score_pool3 = torch.nn.Conv2d(256, n_class, 1)
-        self.score_pool4 = torch.nn.Conv2d(512, n_class, 1)
-        
-        #upsampling
-        
-        self.upsample_1= torch.nn.ConvTranspose2d(
-            n_class, n_class, 8, stride=2, bias=False)
-        self.upsampling_2 = torch.nn.ConvTranspose2d(
-            n_class, n_class, 16, stride=8, bias=False)
-        self.upsample_pool= torch.nn.ConvTranspose2d(
-            n_class, n_class, 8, stride=2, bias=False)
-        
+
+
     def forward(self, x):
-        '''
-            Args:
-                x : torch.Tensor
-                    tensor of N x d
+        f = x
+        f = self.relu1_1(self.conv1_1(f))
+        f = self.relu1_2(self.conv1_2(f))
+        f = self.pool1(f)
 
-            Returns:
-                torch.Tensor
-                    tensor of n_output
-        '''
+        f = self.relu2_1(self.conv2_1(f))
+        f = self.relu2_2(self.conv2_2(f))
+        f = self.pool2(f)
 
-        # TODO: Implement forward function
-        c = x
-       
-        x = self.conv1(x)
-        x = self.relu1(x)
-        x = self.conv1_2(x)
-        x = self.relu1_2(x)
-        x = self.pool1(x)
-        
-        x = self.conv2(x)
-        x = self.relu2(x)
-        x = self.conv2_2(x)
-        x = self.pool2(x)
-        
-        x = self.conv3(x)
-        x = self.relu3(x)
-        x = self.conv3_2(x)
-        x = self.pool3(x)
-        pool3 = x
-        
-        x = self.conv4(x)
-        x = self.relu4(x)
-        x = self.conv4_2(x)
-        x = self.pool4(x)
-        pool4 = x
-        
-        x = self.conv5(x)
-        x = self.relu5(x)
-        x = self.conv5_2(x)
-        x = self.pool5(x)
-        
-        x = self.conv6(x)
-        x = self.relu6(x)
-        x = self.conv6_2(x)
-        x = self.pool6(x)
-        
-        x = self.conv7(x)
-        x = self.relu7(x)
-        x = self.conv7_2(x)
-        x = self.pool7(x)
-        
-        x = self.conv8(x)
-        x = self.relu8(x)
-        x = self.conv8_2(x)
-        x = self.pool8(x)
-        
-        x = self.relu_fc_1(self.fcn_1(x))
-        x = self.drop1(x)
+        f = self.relu3_1(self.conv3_1(f))
+        f = self.relu3_2(self.conv3_2(f))
+        f = self.pool3(f)
+      
 
-        x = self.relu_fc_2(self.fcn_2(x))
-        x = self.drop2(x)
-
-        #yet to forward the transposed layer(upsampling)       
+        f = self.relu4_1(self.conv4_1(f))
+        f = self.relu4_2(self.conv4_2(f))
+        f = self.pool4(f)
+  
         
-        return x
-
+        #Deconvolution/upsampling
+        #fully connected Layer 1
+        f = self.fc1(f)
+        f = self.relu5_1(self.conv5_1(f))
+        f = self.relu5_2(self.conv5_2(f))
+        #fully connected Layer 2
+        f = self.fc2(f)
+        f = self.relu6_1(self.conv6_1(f))
+        f = self.relu6_2(self.conv6_2(f))
+        #fully connected Layer 3
+        f = self.fc3(f)
+        f = self.relu7_1(self.conv7_1(f))
+        f = self.relu7_2(self.conv7_2(f))
+        #fully connected Layer 4
+        f = self.fc4(f)
+        f = self.relu8_1(self.conv8_1(f))
+        f = self.relu8_2(self.conv8_2(f))
+        
+        return f
+    
 def train(net,
           dataloader,
           n_epoch,
@@ -246,7 +194,7 @@ def train(net,
     '''
 
     # TODO: Define loss function
-    loss_func = torch.nnCrossEntropyLoss()
+    loss_func = torch.nn.CrossEntropyLoss()
 
     for epoch in range(n_epoch):
 
@@ -261,7 +209,8 @@ def train(net,
                 param_group['lr'] = learning_rate_decay * param_group['lr']
                 
         for batch, (images, labels) in enumerate(dataloader):
-
+            
+            
             # TODO: Forward through the network
             outputs = net(images)
             
@@ -285,7 +234,7 @@ def train(net,
 
     return net
 
-def evaluate(net, dataloader, classes):
+def evaluate(net, dataloader):
     '''
     Evaluates the network on a dataset
 
@@ -298,7 +247,7 @@ def evaluate(net, dataloader, classes):
 
         Please add any necessary arguments
     '''
-     n_correct = 0
+    n_correct = 0
     n_sample = 0
     
     # Make sure we do not backpropagate
@@ -347,6 +296,7 @@ def evaluate(net, dataloader, classes):
         fig_title='Image Segmentation of fully convolutional neural networks uf VOC-2012 dataset')
 
     plt.show()
+
 def intersection_over_union(prediction, ground_truth):
     '''
     Computes the intersection over union (IOU) between prediction and ground truth
@@ -369,6 +319,7 @@ def intersection_over_union(prediction, ground_truth):
     score_IOU = np.sum(intersection) / np.sum(union)
     
     return score_IOU
+
 
 def plot_images(X, Y, n_row, n_col, fig_title, subplot_titles):
     '''
@@ -393,19 +344,12 @@ def plot_images(X, Y, n_row, n_col, fig_title, subplot_titles):
     fig.suptitle(fig_title)
 
     # TODO: Visualize your input images and predictions
-
-    fig = plt.figure()
-    fig.suptitle(fig_title)
-
     for i in range(1, n_row * n_col + 1):
 
         ax = fig.add_subplot(n_row, n_col, i)
 
         index = i - 1
-        if index >= (n_row * n_col /  2):
-            x_i = Y[index, ...]
-        else:
-            x_i = X[index, ...]
+        x_i = X[index, ...]
         subplot_title_i = subplot_titles[index]
 
         if len(x_i.shape) == 1:
@@ -416,10 +360,6 @@ def plot_images(X, Y, n_row, n_col, fig_title, subplot_titles):
 
         plt.box(False)
         plt.axis('off')
-        
-    plt.show()
-
-
 
 if __name__ == '__main__':
 
@@ -483,12 +423,11 @@ if __name__ == '__main__':
         'sheep',
         'sofa',
         'train',
-        'tvmonitor'
-    ]
+        'tvmonitor']
     #Deining the input features
     input_features = 3 * 224 * 224
     
-    #VOC has 20 classes
+    #VOC has 21 classes
     n_class = 20
 
     # TODO: Define network
@@ -501,7 +440,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.SGD(
         net.parameters(),
         lr=args.learning_rate,
-        weight_decay=args.weight_decay,
+        weight_decay=args.lambda_weight_decay,
         momentum=args.momentum)
     
     if args.train_network:
