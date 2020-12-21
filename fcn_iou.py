@@ -1,7 +1,8 @@
 '''
 Names (Please write names in <Last Name, First Name> format):
-1. Doe, John
-2. Doe, Jane
+1. kanagaraj, kanimozhi
+2.Patel, jaimin
+3.Murphy, Jamison
 
 TODO: Project type
 
@@ -62,64 +63,64 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         # https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html
         
         #Layer 1 + Relu activation function + maxpooling
-        self.conv1 = torch.nn.Conv2d(in_channels=input_features, out_channels=64, kernel_size=3, padding=1)
+        self.conv1 = torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, padding=1)
         self.relu1 = torch.nn.ReLU(inplace=True)
-        self.conv1_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
+        self.conv1_2 = torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, padding=1)
         self.relu1_2 = torch.nn.ReLU(inplace=True)
         self.pool1 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
         #Layer 2 + Relu activation function + maxpooling
-        self.conv2 = torch.nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
+        self.conv2 = torch.nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1)
         self.relu2 = torch.nn.ReLU(inplace=True)
-        self.conv2_2 = torch.nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1)
+        self.conv2_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu2_2 = torch.nn.ReLU(inplace=True)
         self.pool2 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
         #Layer 3 + Relu activation function + maxpooling
-        self.conv3 = torch.nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, padding=1)
+        self.conv3 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu3 = torch.nn.ReLU(inplace=True)
-        self.conv3_2 = torch.nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1)
+        self.conv3_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu3_2 = torch.nn.ReLU(inplace=True)
         self.pool3 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
         #Layer 4 + Relu activation function + maxpooling
-        self.conv4 = torch.nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, padding=1)
+        self.conv4 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu4 = torch.nn.ReLU(inplace=True)
-        self.conv4_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv4_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu4_2 = torch.nn.ReLU(inplace=True)
         self.pool4 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
         #Tranposing Convolutional layer
         #Fully connected layer 1
-        self.fc1 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
-        self.conv5 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.fc1 = torch.nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=2)
+        self.conv5 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu5 = torch.nn.ReLU(inplace=True)
-        self.conv5_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv5_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu5_2 = torch.nn.ReLU(inplace=True)
         
         #fully connected Layer 2
-        self.fc2 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
-        self.conv6 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.fc2 = torch.nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=2)
+        self.conv6 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu6 = torch.nn.ReLU(inplace=True)
-        self.conv6_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv6_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu6_2 = torch.nn.ReLU(inplace=True)
         
         
-         #fully connected Layer 3
-        self.fc3 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
-        self.conv7 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        #fully connected Layer 3
+        self.fc3 = torch.nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=2)
+        self.conv7 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu7 = torch.nn.ReLU(inplace=True)
-        self.conv7_2 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv7_2 = torch.nn.Conv2d(in_channels=64, out_channels=32, kernel_size=3, padding=1)
         self.relu7_2 = torch.nn.ReLU(inplace=True)
         
-         #fully connected Layer 4
-        self.fc4 = torch.nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
-        self.conv8 = torch.nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        #fully connected Layer 4
+        self.fc4 = torch.nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=2)
+        self.conv8 = torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, padding=1)
         self.relu8 = torch.nn.ReLU(inplace=True)
-        self.conv8_2 = torch.nn.Conv2d(in_channels=256, out_channels=n_class, kernel_size=3, padding=1)
+        self.conv8_2 = torch.nn.Conv2d(in_channels=32, out_channels=n_class, kernel_size=3, padding=1)
         self.relu8_2 = torch.nn.ReLU(inplace=True)
         
-        
+        self.upsampling = torch.nn.Upsample((32 , 32))
 
 
     def forward(self, x):
@@ -159,6 +160,8 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         f = self.fc4(f)
         f = self.relu8(self.conv8(f))
         f = self.relu8_2(self.conv8_2(f))
+        
+        f = self.upsampling(f)
         
         return f
     
@@ -216,7 +219,9 @@ def train(net,
             
             # TODO: Clear gradients so we don't accumlate them from previous batches
             optimizer.zero_grad()
-
+            labels = torch.squeeze(labels)
+            labels = labels.long()
+            
             # TODO: Compute loss function
             loss = loss_func(outputs, labels)
 
@@ -262,6 +267,8 @@ def evaluate(net, dataloader):
             
             # TODO: Forward through the network
             outputs = net(images)
+            labels = torch.squeeze(labels)
+            labels = labels.long()
             
             # TODO: Compute evaluation metric(s) for each sample
             _, predictions = torch.max(outputs, dim=1)
@@ -366,7 +373,7 @@ if __name__ == '__main__':
     # TODO: Set up data preprocessing step
     # https://pytorch.org/docs/stable/torchvision/transforms.html
     data_preprocess_transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize((224,224)),
+        torchvision.transforms.Resize((32,32)),
         torchvision.transforms.ToTensor(),
     ])
 
@@ -425,7 +432,7 @@ if __name__ == '__main__':
         'train',
         'tvmonitor']
     #Deining the input features
-    input_features = 3 * 224 * 224
+    input_features = 32 * 32
     
     #VOC has 21 classes
     n_class = 20
@@ -469,5 +476,4 @@ if __name__ == '__main__':
     # TODO: Evaluate network on testing set
     evaluate(
         net=net,
-        dataloader=dataloader_test,
-        classes=classes)
+        dataloader=dataloader_test)
