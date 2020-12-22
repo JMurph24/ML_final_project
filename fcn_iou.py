@@ -76,19 +76,19 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         self.relu2_2 = torch.nn.ReLU(inplace=True)
         self.pool2 = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         
-        #Layer 3 + Relu activation function + maxpooling
+        #Layer 3 + Relu activation function + Avgpooling
         self.conv3 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu3 = torch.nn.ReLU(inplace=True)
         self.conv3_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu3_2 = torch.nn.ReLU(inplace=True)
         self.pool3 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
         
-        #Layer 4 + Relu activation function + maxpooling
+        #Layer 4 + Relu activation function , Latent vector
         self.conv4 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu4 = torch.nn.ReLU(inplace=True)
         self.conv4_2 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
         self.relu4_2 = torch.nn.ReLU(inplace=True)
-        self.pool4 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
+        #self.pool4 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
         
         #Tranposing Convolutional layer
         #Fully connected layer 1
@@ -120,7 +120,7 @@ class FullyConvolutionalNetwork(torch.nn.Module):
         self.conv8_2 = torch.nn.Conv2d(in_channels=32, out_channels=n_class, kernel_size=3, padding=1)
         self.relu8_2 = torch.nn.ReLU(inplace=True)
         
-        self.upsampling = torch.nn.Upsample((32 , 32))
+        self.upsampling = torch.nn.Upsample((input_features , input_features))
 
 
     def forward(self, x):
@@ -140,7 +140,7 @@ class FullyConvolutionalNetwork(torch.nn.Module):
 
         f = self.relu4(self.conv4(f))
         f = self.relu4_2(self.conv4_2(f))
-        f = self.pool4(f)
+        #f = self.pool4(f)
   
         
         #Deconvolution/upsampling
